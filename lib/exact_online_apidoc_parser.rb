@@ -46,6 +46,11 @@ module ExactOnlineApidocParser
       "#{@api_dir}/#{self.endpoint_to_filename(filename)}.html"
     end
 
+    def el_to_attr(raw_el)
+      page = Nokogiri::HTML(raw_el)
+      page.text.strip
+    end
+
     def api_tree
       resources = []
 
@@ -65,22 +70,29 @@ module ExactOnlineApidocParser
         r['base_path'] =  res.css("td")[2].text.split('{division}/')[1] if res.css("td")[2].text
         r['mandatory_attributes'] = []
         r['other_attributes'] = []
+        r['related_attributes'] = []
         r['supported_methods'] = res.css("td")[3].text
 
         if File.exists? filename
 
-          ## AU AU AU
-          ['showget','key','hidedelete'].each do |cl|
+          respage = File.open(filename) { |f| Nokogiri::HTML(f) }
+          rows = respage.css('table#referencetable tr')
+          rows.each do |tr|
             begin
-              respage = File.open(filename) { |f| Nokogiri::HTML(f) }
-              trs =  respage.css("table#referencetable").css("tr.#{cl}")
-              trs.each do |tr|
-                r['other_attributes'] << ':'+tr.css('td')[1].text.strip
+              raw_el = tr.css('td')[1].inner_html.strip
+
+              r['other_attributes'] << el_to_attr(raw_el)
+
+              if raw_el.include?('Mandatory')
+                r['mandatory_attributes'] << el_to_attr(raw_el)
+              end
+
+              if raw_el.include?('HlpRestAPIResourcesDetails')
+                r['related_attributes'] << el_to_attr(raw_el)
               end
             rescue
             end
           end
-          r['other_attributes'].uniq!
         end
         resources << r
 

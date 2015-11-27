@@ -2,6 +2,14 @@ require 'nokogiri'
 require 'pp'
 require 'ostruct'
 
+desc 'api_tree: display api as tree'
+task :api_tree do
+  parser = ExactOnlineApidocParser::Parse.new('tmp/cache')
+  PP.pp parser.api_tree
+
+end
+
+
 # download index api rest doc
 # download each resource api rest
 desc 'apidoc_cache download Exact Online Api docs'
