@@ -18,9 +18,12 @@ Or install it yourself as:
 
     $ gem install exact_online_apidoc_parser
 
-## Usage
 
-TODO: Write usage instructions here
+## TODO:
+- [ ] mandatoy
+- [ ] better other endpoints
+- [ ] service testing
+- [ ] functions ignoren
 
 ## Contributing
 

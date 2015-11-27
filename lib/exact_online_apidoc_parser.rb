@@ -30,12 +30,16 @@ module ExactOnlineApidocParser
       @api_dir = api_dir
     end
 
+    def base_url
+      "https://start.exactonline.nl/docs/"
+    end
 
     def endpoint_to_filename(filename)
-      p filename
-      filename.gsub(/[^\w\s_-]+/, '')
-        .gsub(/(^|\b\s)\s+($|\s?\b)/, '\\1\\2')
-        .gsub(/\s+/, '_')
+      if filename
+        filename.gsub(/[^\w\s_-]+/, '')
+          .gsub(/(^|\b\s)\s+($|\s?\b)/, '\\1\\2')
+          .gsub(/\s+/, '_')
+      end
     end
 
     def endpoint_to_filepath(filename)
@@ -57,7 +61,7 @@ module ExactOnlineApidocParser
         end
 
         r['service'] = res.css("td")[0].text
-        r['end_point'] = res.css("td")[1].css('a').text
+        r['end_point'] = res.css("td")[1].css('a').text.gsub("/","")
         r['base_path'] =  res.css("td")[2].text.split('{division}/')[1] if res.css("td")[2].text
         r['mandatory_attributes'] = []
         r['other_attributes'] = []

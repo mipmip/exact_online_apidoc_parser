@@ -14,8 +14,7 @@ task :apidoc_cache do
 
   parser = ExactOnlineApidocParser::Parse.new(basedir)
 
-  base_url = "https://start.exactonline.nl/docs/"
-  sh "curl #{base_url}HlpRestAPIResources.aspx?SourceAction=10 > #{basedir}/index.html"
+  sh "curl #{parser.base_url}HlpRestAPIResources.aspx?SourceAction=10 > #{basedir}/index.html"
 
   page = File.open("#{basedir}/index.html") { |f| Nokogiri::HTML(f) }
   resource_links = page.css("table#referencetable").css("tr").css("td").css("a")
@@ -24,7 +23,7 @@ task :apidoc_cache do
     filepath = parser.endpoint_to_filepath(link.text)
 
     unless filepath.include? 'Function_Details'
-      sh "curl #{base_url}#{link['href']} > '#{filepath}'"
+      sh "curl #{parser.base_url}#{link['href']} > '#{filepath}'"
     end
   end
 end
