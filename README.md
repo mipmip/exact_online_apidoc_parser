@@ -20,10 +20,10 @@ Or install it yourself as:
 
 
 ## TODO:
-- [ ] mandatoy
-- [ ] better other endpoints
+- [x] mandatoy
+- [x] better other endpoints
 - [ ] service testing
-- [ ] functions ignoren
+- [x] functions ignoren
 
 ## Contributing
 

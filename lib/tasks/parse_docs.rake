@@ -6,7 +6,6 @@ desc 'api_tree: display api as tree'
 task :api_tree do
   parser = ExactOnlineApidocParser::Parse.new('tmp/cache')
   PP.pp parser.api_tree
-
 end
 
 

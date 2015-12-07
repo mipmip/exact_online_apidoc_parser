@@ -9,7 +9,7 @@ class String
 
   def wrap(width=78, indent=0)
     ind=''
-    indent.times do 
+    indent.times do
       ind= ind + " "
     end
 
@@ -52,7 +52,7 @@ module ExactOnlineApidocParser
     end
 
     def api_tree
-      resources = []
+      resources = {}
 
       page = File.open("#{@api_dir}/index.html") { |f| Nokogiri::HTML(f) }
       resource_sections = page.css("table#referencetable").css("tr")
@@ -71,6 +71,7 @@ module ExactOnlineApidocParser
         r['mandatory_attributes'] = []
         r['other_attributes'] = []
         r['related_attributes'] = []
+        r['all_attributes'] = []
         r['supported_methods'] = res.css("td")[3].text
 
         if File.exists? filename
@@ -80,25 +81,29 @@ module ExactOnlineApidocParser
           rows.each do |tr|
             begin
               raw_el = tr.css('td')[1].inner_html.strip
+              element_name = el_to_attr(raw_el)
+              type = el_to_attr(tr.css('td')[4].inner_html.strip)
+              desc = tr.css('td')[5].inner_html.strip
 
-              r['other_attributes'] << el_to_attr(raw_el)
+              r['all_attributes'] << {'name' => element_name, 'type'=> type, 'desc' => desc}
+
+              r['other_attributes'] << element_name
 
               if raw_el.include?('Mandatory')
-                r['mandatory_attributes'] << el_to_attr(raw_el)
+                r['mandatory_attributes'] << element_name
               end
 
               if raw_el.include?('HlpRestAPIResourcesDetails')
-                r['related_attributes'] << el_to_attr(raw_el)
+                r['related_attributes'] << element_name
               end
             rescue
             end
           end
         end
-        resources << r
+        resources[r['end_point']] = r unless r['end_point'] == ''
 
       end
       resources
     end
-
   end
 end
