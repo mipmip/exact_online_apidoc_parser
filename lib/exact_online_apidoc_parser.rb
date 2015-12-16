@@ -68,9 +68,9 @@ module ExactOnlineApidocParser
         r['service'] = res.css("td")[0].text
         r['end_point'] = res.css("td")[1].css('a').text.gsub("/","")
         r['base_path'] =  res.css("td")[2].text.split('{division}/')[1] if res.css("td")[2].text
-        r['mandatory_attributes'] = []
-        r['other_attributes'] = []
-        r['related_attributes'] = []
+        r['mandatory_attributes'] = [] #depr.
+        r['other_attributes'] = [] #depr.
+        r['related_attributes'] = [] #depr.
         r['all_attributes'] = []
         r['supported_methods'] = res.css("td")[3].text
 
@@ -80,22 +80,31 @@ module ExactOnlineApidocParser
           rows = respage.css('table#referencetable tr')
           rows.each do |tr|
             begin
+              #mandatory = false
               raw_el = tr.css('td')[1].inner_html.strip
               element_name = el_to_attr(raw_el)
               type = el_to_attr(tr.css('td')[4].inner_html.strip)
               desc = tr.css('td')[5].inner_html.strip
 
-              r['all_attributes'] << {'name' => element_name, 'type'=> type, 'desc' => desc}
-
-              r['other_attributes'] << element_name
 
               if raw_el.include?('Mandatory')
-                r['mandatory_attributes'] << element_name
+                r['mandatory_attributes'] << element_name ## Depr.
+                mandatory = true
               end
 
               if raw_el.include?('HlpRestAPIResourcesDetails')
-                r['related_attributes'] << element_name
+                r['related_attributes'] << element_name ## Depr.
+                foreign_end_point = raw_el.split('name=')[1].split('"')[0]
               end
+              r['other_attributes'] << element_name ## Depr.
+
+              r['all_attributes'] << {'name' => element_name,
+                                      'type'=> type,
+                                      'desc' => desc,
+                                      'foreign_end_point' => foreign_end_point,
+                                      'mandatory' => mandatory}
+
+
             rescue
             end
           end
