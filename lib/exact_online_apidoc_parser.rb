@@ -17,7 +17,6 @@ class String
   end
 end
 
-
 require "exact_online_apidoc_parser/version"
 
 spec = Gem::Specification.find_by_name 'exact_online_apidoc_parser'
@@ -88,15 +87,15 @@ module ExactOnlineApidocParser
 
 
               if raw_el.include?('Mandatory')
-                r['mandatory_attributes'] << element_name ## Depr.
+                r['mandatory_attributes'] << element_name.underscore ## Depr.
                 mandatory = true
               end
 
               if raw_el.include?('HlpRestAPIResourcesDetails')
-                r['related_attributes'] << element_name ## Depr.
+                r['related_attributes'] << element_name.underscore ## Depr.
                 foreign_end_point = raw_el.split('name=')[1].split('"')[0]
               end
-              r['other_attributes'] << element_name ## Depr.
+              r['other_attributes'] << element_name.underscore ## Depr.
 
               r['all_attributes'] << {'name' => element_name,
                                       'type'=> type,
